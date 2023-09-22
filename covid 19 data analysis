@@ -1,1 +1,69 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+data = pd.read_csv("Covid cases in India.csv")
+data.head()
+data.info()
+data.rename(columns={'Name of State /    UT':'States','Cured/Discharged/Migrated':'Discharged'},inplace=True)
+data.columns
+data.isnull().sum()
+x=data["Active"].mode()[0]
+print(x)
+data["Active"].fillna(x,inplace=True)
+data.head(20)
+data.isnull().sum()
+print(data)
+
+data['%cured'] = (data['Discharged']/data['Total Confirmed cases'])*100
+data['%Deaths']=(data['Deaths']/data['Total Confirmed cases'])*100
+df_latest = data.sort_values(by=['Total Confirmed cases'], ascending = False)
+df_latest.head(10)
+df2= df_latest.copy()
+df_Top= df2.head(10)
+df_Top.style.background_gradient(cmap='gist_earth')
+df2 = df2.sort_values(by=['Total Confirmed cases'], ascending = False)
+for feature in df2[['Total Confirmed cases','Discharged','Deaths','Active']]:
+     fig=plt.figure(figsize=(30,10))
+     plt.title("Top 10 highly impacted sates as on 11-Aug-21", size=10)
+     ax=sns.barplot(data=df2,y=df2[feature],x='States', linewidth=0,     edgecolor='black')
+    plt.xlabel('States', size = 15)
+    plt.ylabel(feature, size = 15)
+for i in ax.patches:
+   ax.text(x=i.get_x(),y=i.get_height(),s=i.get_height())
+   plt.show()
+
+print("The total no of deaths:",df_latest['Deaths'].sum())
+print("The total no of cured:",df_latest['Discharged'].sum())
+day = pd.read_csv("per_day_cases.csv")
+day.head(10)
+sns.set(rc={'figure.figsize':(10,8)})
+sns.lineplot(x='Date', y='Total Cases', data= day)
+plt.figure(figsize=(10,5))
+sns.lineplot(x="Date",y="New Cases",data=day.tail(10),color="r",lw=3,marker='o',markersize=10)
+plt.title('RATE OF CASES IN THE MONTH OF FEBRUARY 2020')
+plt.show()
+day_new = day.sort_values(by=['Date'], ascending = False)
+plt.figure(figsize=(15,4), dpi=80)
+plt.bar(day_new['Date'][:10], day_new['New Cases'][:10],align='center',color='skyblue')
+plt.ylabel('New cases', size = 12)
+plt.title('FEBRUARY 2020', size = 16)
+plt.show()
+vacc = pd.read_csv("COVID-19 India Statewise Vaccine Data.csv")
+print(vacc)
+vacc_new = vacc.sort_values(by=['Dose 1'], ascending = False)
+plt.figure(figsize=(20,4), dpi=80)
+plt.bar(vacc_new['State/UTs'][:15], vacc_new['Dose 1'][:15],align='center',color='skyblue')
+plt.ylabel('Vaccination Doses', size = 12)
+plt.title('States', size = 16)
+plt.show()
+
+plt.figure(figsize=(10,5))
+sns.lineplot(x="State/UTs",y="Dose 1",data=vacc.tail(10),color="g",lw=3,marker='o',markersize=10)
+plt.title('RATE OF vaccination of each state')
+plt.show()
+plt.figure(figsize=(10,5))
+sns.lineplot(x="State/UTs",y="Dose 2",data=vacc.tail(10),color="g",lw=3,marker='o',markersize=10)
+plt.title('RATE OF vaccination of each state')
+plt.show()
 
